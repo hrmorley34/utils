@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ -n "$STY" ]; then
+  # If $STY set, we're in a screen; print to stderr
+  echo "WARNING: You are inside a screen" 1>&2
+fi
+
+if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$2-" ]; then
+  # Print some text
+  echo "$0 SCREENNAME COMMAND..."
+else
+  # Start a new screen in detached mode
+  # Set the session name and title to $1 and run the remaining arguments
+  screen -dmS $1 -t $1 $2-
+fi
