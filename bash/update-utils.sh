@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Go to folder containing this file
 cd "${0%/*}"
 
