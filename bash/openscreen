@@ -8,11 +8,21 @@ fi
 if [ -z "$1" ] || [ "$1" = "-l" ]; then
   # List running screens
   screen -ls
+elif [ "$1" = "-p" ]; then
+  # Include colour variables
+  ${0%/*}/source-colours.sh
+  screen -ls | sed "
+    s/\t\([0-9]\+\)\.\([^ \t\n]\+\)\t/\t${F_BGREEN}\1${F_RESET}.${F_BCYAN}\2${F_RESET}\t/
+    s/\t\(([0-9 :\/-]\+)\)\t/\t${F_BYELLOW}\1${F_RESET}\t/
+    s/\t\((Detached)\)/\t${F_BRED}\1${F_RESET}/
+    s/\t\((Attached)\)/\t${F_BGREEN}\1${F_RESET}/"
+  # GREEN id, BLUE name, YELLOW datetime, RED attached/GREEN detached
 elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   # Print some text
-  echo "$0 [-l]   List running screens"
   echo "$0 -h     Print this help"
-  echo "$0 NAME   Open a screen (^A D to detach from it)"
+  echo "$0 [-l]   List running screens"
+  echo "$0 -p     List with colours (pretty)"
+  echo "$0 NAME   Open a screen (^a d to detach from it)"
 else
   # Reattach a session; detach first if necessary
   screen -d -r $1
