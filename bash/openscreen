@@ -10,7 +10,7 @@ if [ -z "$1" ] || [ "$1" = "-l" ]; then
   screen -ls
 elif [ "$1" = "-p" ]; then
   # Include colour variables
-  ${0%/*}/source-colours.sh
+  . ${0%/*}/source-colours.sh
   screen -ls | sed "
     s/\t\([0-9]\+\)\.\([^ \t\n]\+\)\t/\t${F_BGREEN}\1${F_RESET}.${F_BCYAN}\2${F_RESET}\t/
     s/\t\(([0-9 :\/-]\+)\)\t/\t${F_BYELLOW}\1${F_RESET}\t/
