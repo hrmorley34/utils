@@ -14,6 +14,7 @@ HELP_TEXT () {
   echo "$0 [-l]   List running screens"
   echo "$0 -p     List with colours (pretty)"
   echo "$0 NAME   Open a screen (^a d to detach from it)"
+  echo "$0 -r user@host:port [-l | -p | NAME]  Open a remote screen through SSH"
 }
 
 
@@ -30,6 +31,22 @@ elif [ "$1" = "-p" ]; then
   . ${0%/*}/source-colours.sh
   screen -ls | sed "$(SED_COLOURER)"
   # GREEN id, BLUE name, YELLOW datetime, RED attached/GREEN detached
+elif [ "$1" = "-r" ]; then
+  if [ -z "$2" ]; then
+    echo "No remote given!"
+  else
+    if [ -z "$3" ] || [ "$3" = "-l" ]; then
+      ssh "$2" "screen -ls"
+    elif [ "$3" = "-p" ]; then
+      ssh "$2" "screen -ls" | sed "$(SED_COLOURER)"
+    elif [ "$3" = "-h" ] || [ "$3" = "--help" ]; then
+      HELP_TEXT
+    elif [ "$3" = "-r" ]; then
+      echo "Inception remoting not implemented"
+    else
+      ssh "$2" -tt "screen -d -r $3"
+    fi
+  fi
 elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   # Print the help text
   HELP_TEXT
