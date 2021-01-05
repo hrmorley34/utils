@@ -2,7 +2,7 @@
 
 SED_COLOURER () {
   . ${0%/*}/source-colours.sh
-  echo "
+  sed -e "
   s/\t\([0-9]\+\)\.\([^ \t\n]\+\)\t/\t${F_BGREEN}\1${F_RESET}.${F_BCYAN}\2${F_RESET}\t/
   s/\t\(([0-9 :\/-]\+)\)\t/\t${F_BYELLOW}\1${F_RESET}\t/
   s/\t\((Detached)\)/\t${F_BRED}\1${F_RESET}/
@@ -29,7 +29,7 @@ if [ -z "$1" ] || [ "$1" = "-l" ]; then
 elif [ "$1" = "-p" ]; then
   # Include colour variables
   . ${0%/*}/source-colours.sh
-  screen -ls | sed "$(SED_COLOURER)"
+  screen -ls | SED_COLOURER
   # GREEN id, BLUE name, YELLOW datetime, RED attached/GREEN detached
 elif [ "$1" = "-r" ]; then
   if [ -z "$2" ]; then
@@ -38,7 +38,7 @@ elif [ "$1" = "-r" ]; then
     if [ -z "$3" ] || [ "$3" = "-l" ]; then
       ssh "$2" "screen -ls"
     elif [ "$3" = "-p" ]; then
-      ssh "$2" "screen -ls" | sed "$(SED_COLOURER)"
+      ssh "$2" "screen -ls" | SED_COLOURER
     elif [ "$3" = "-h" ] || [ "$3" = "--help" ]; then
       HELP_TEXT
     elif [ "$3" = "-r" ]; then
