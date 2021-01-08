@@ -11,6 +11,6 @@ if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$2" ]; then
 else
   # Start a new screen in detached mode
   # Set the session name and title to the first argument and run the remaining arguments
-  NAME=$1; shift
-  screen -d -m -S $NAME -t $NAME "$@"
+  NAME="$1"; shift
+  screen -d -m -S "$NAME" -t "$NAME" "$@"
 fi

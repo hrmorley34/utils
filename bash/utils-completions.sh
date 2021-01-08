@@ -18,13 +18,14 @@ _enable_util_completions () {
 
 
 if [ "$1" = "i" ] || [ "$1" = "-i" ] || [ "$1" = "install" ] || [ "$1" = "--install" ]; then
-  THISFILE=$(realpath ${0})
+  THISFILE=$(realpath "${0}")
   if [ -z "$THISFILE" ]; then
-    THISFILE=${0}; # if empty (command failed?), default to plain $0
+    THISFILE="${0}"; # if empty (command failed?), default to plain $0
   fi
   if [ ! -e "$THISFILE" ]; then
     # doesn't exist; bail
     echo "Cannot find this script reliably; failed."
+    exit 1
   else
     echo "Found script at $THISFILE"
 
@@ -33,10 +34,12 @@ if [ "$1" = "i" ] || [ "$1" = "-i" ] || [ "$1" = "install" ] || [ "$1" = "--inst
       echo "Moving existing file to .bak"
       mv "$WRITEFILE" "$WRITEFILE.bak"
     fi
-    if printf '#!/bin/bash\n\n. '$THISFILE'\n_enable_util_completions\n' >$WRITEFILE; then
+    if printf '#!/bin/bash\n\n. "'"$THISFILE"'"\n_enable_util_completions\n' > "$WRITEFILE"; then
       echo "Done!"
+      exit 0
     else
       echo "Failed write, should you be running as sudo?"
+      exit 1
     fi
   fi
 fi
