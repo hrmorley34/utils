@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+_complete_util_compgen_Wi () { compgen -W "$1" | grep -i "^${2}"; } # use grep (imperfect)
+
+
 _complete_util_openscreen () {
   SCREENNAMES=$(screen -ls | sed "
     s/^.*\t\([0-9]\+\)\.\([^ \t\n]\+\)\t.*$/\1.\2/;
@@ -8,7 +12,7 @@ _complete_util_openscreen () {
     p;                          # print full pattern
     s/^[0-9]\+\.\(.*\)$/\1/;    # remove PID from the start (pid.name -> name)
     p; d;                       # print, then finish (don't print again)")
-  COMPREPLY=($(compgen -W "$SCREENNAMES" $2))
+  COMPREPLY=($(_complete_util_compgen_Wi "$SCREENNAMES" "${2}"))
 }
 
 
