@@ -7,14 +7,25 @@ SED_COLOURER () {
   s/\t\(([0-9 :\/-]\+)\)\t/\t${F_BYELLOW}\1${F_RESET}\t/
   s/\t\((Detached)\)/\t${F_BRED}\1${F_RESET}/
   s/\t\((Attached)\)/\t${F_BGREEN}\1${F_RESET}/"
+  # GREEN id, BLUE name, YELLOW datetime, RED attached/GREEN detached
 }
 
 HELP_TEXT () {
   echo "$0 -h     Print this help"
-  echo "$0 [-l]   List running screens"
+  echo "$0 -l     List running screens"
   echo "$0 -p     List with colours (pretty)"
   echo "$0 NAME   Open a screen (^a d to detach from it)"
   echo "$0 -r user@host:port [-l | -p | NAME]  Open a remote screen through SSH"
+}
+
+OPTIONAL_COLOURER () {
+  if [ "$1" = "-p" ] || { [ -t 1 ] && [ -z "$1" ]; }; then
+    # If -p option, or output is tty and no option, then colour
+    SED_COLOURER
+  else
+    # Just pipe input to output
+    cat -
+  fi
 }
 
 
@@ -23,25 +34,21 @@ if [ -n "$STY" ]; then
   echo "WARNING: You are inside a screen" 1>&2
 fi
 
-if [ -z "$1" ] || [ "$1" = "-l" ]; then
+if [ -z "$1" ] || [ "$1" = "-l" ] || [ "$1" = "-p" ]; then
   # List running screens
-  screen -ls
-elif [ "$1" = "-p" ]; then
-  # Include colour variables
-  screen -ls | SED_COLOURER
-  # GREEN id, BLUE name, YELLOW datetime, RED attached/GREEN detached
+  screen -ls | OPTIONAL_COLOURER "$1"
 elif [ "$1" = "-r" ]; then
   if [ -z "$2" ]; then
     echo "No remote given!"
+    exit 1
   else
-    if [ -z "$3" ] || [ "$3" = "-l" ]; then
-      ssh "$2" "screen -ls"
-    elif [ "$3" = "-p" ]; then
-      ssh "$2" "screen -ls" | SED_COLOURER
+    if [ -z "$3" ] || [ "$3" = "-l" ] || [ "$3" = "-p" ]; then
+      ssh "$2" "screen -ls" | OPTIONAL_COLOURER "$3"
     elif [ "$3" = "-h" ] || [ "$3" = "--help" ]; then
       HELP_TEXT
     elif [ "$3" = "-r" ]; then
       echo "Inception remoting not implemented"
+      exit 1
     else
       ssh "$2" -tt "screen -d -r \"$3\""
     fi
