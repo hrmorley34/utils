@@ -15,7 +15,7 @@ class PrimesArray:
     def __init__(self, initial=[2, 3, 5, 7, 11, 13, 17, 19]):
         " Create a PrimesArray with an initial list of primes "
         if initial:
-            self.values = initial
+            self.values = list(initial)
             self.max = int(initial[-1])
         else:
             self.values = [2]
