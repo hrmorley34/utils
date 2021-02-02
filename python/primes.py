@@ -72,10 +72,10 @@ class PrimesArray:
 
     def __iter__(self):
         " Iterate infinitely through the prime numbers (from 2) "
-        for p in self.values:
-            yield p
+        i = 0
         while True:
-            yield self.next()
+            yield self[i]
+            i += 1
 
 
 primes = PrimesArray()
